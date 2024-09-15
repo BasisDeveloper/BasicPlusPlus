@@ -6,15 +6,18 @@
 #include "Basic++/Printing.hxx"
 #include "Basic++/Message.hxx"
 
-namespace Basic::Expectations
+namespace Basic
 {
-    template<typename T>
-    struct Expected;
+    inline namespace Resulting
+    {
+        template<typename T>
+        struct Result;
+    }
 }
 
 namespace Basic
 {
-    namespace Expectations
+    inline namespace Expectations
     {
         static bool Expect(
             bool condition,
@@ -23,8 +26,9 @@ namespace Basic
 
         template<typename T>
         bool Expect(
-            Expected<T> expected,
+            Result<T> expected,
             const std::source_location& source_location = std::source_location::current());
+
     }
 }
 
@@ -36,9 +40,7 @@ namespace Basic
 // Later on, we should use a modified version of https://github.com/scottt/debugbreak.
 #define BASIC_DEBUG_BREAK() DebugBreak();
 
-
 #ifndef NO_EXPECTATIONS
-
 #define EXPECT(_cond_, _msg_, ...)                                                                         \
         if (!Basic::Expectations::Expect((_cond_), {_msg_, __VA_ARGS__}, std::source_location::current())) \
 		{		                                                                                           \
@@ -47,7 +49,7 @@ namespace Basic
             std::exit(EXIT_FAILURE);									                                   \
 		} 																					               
 
-// E (Expected) Expect
+// E (Result) Expect
 #define EEXPECT(_expected_)                                                                                           \
 [&]() {                                                                                                               \
     auto expected = _expected_;                                                                                       \
@@ -73,7 +75,7 @@ namespace Basic
 
 namespace Basic
 {
-    namespace Expectations
+    inline namespace Expectations
     {
         bool Expect(
             bool condition,
@@ -86,7 +88,7 @@ namespace Basic
         {
             if (!condition) [[unlikely]]
             {
-                Basic::Printing::Print("expectation not satisfied : '{}'", msg.string.data());
+                Basic::Print("expectation not satisfied : '{}'", msg.string.data());
 
                 const auto file_name =
                     std::filesystem::path(source_location.file_name()).filename().string();
@@ -102,7 +104,7 @@ namespace Basic
 
         template<typename T>
         bool Expect(
-            Expected<T> expected,
+            Result<T> expected,
             const std::source_location& source_location)
         {
             return Expect(expected == true, Message{ expected.status() }, source_location);

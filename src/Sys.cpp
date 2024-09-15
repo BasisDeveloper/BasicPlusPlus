@@ -44,7 +44,7 @@ void Setup_Global_Job_Handle()
         &extended_job_information,
         sizeof(extended_job_information)))
     {
-        win32::Error_Exit("SetInformationJobObject");
+        Basic::win32::Error_Exit("SetInformationJobObject");
     }
 
     has_ran_before = true;

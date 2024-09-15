@@ -15,9 +15,9 @@
 #include <tuple>
 #include <cstdint>
 
-namespace win32
+namespace Basic::win32
 {
-	#define WIN32_CHECK(cond) if (!(cond)) { win32::Error_Exit(TEXT(#cond)); }
+	#define WIN32_CHECK(cond) if (!(cond)) { Basic::win32::Error_Exit(TEXT(#cond)); }
 
 	// Copied from https://learn.microsoft.com/en-us/windows/win32/debug/retrieving-the-last-error-code
 	void Error_Exit(LPCTSTR function_name, const std::source_location& location = std::source_location::current());
@@ -169,4 +169,4 @@ namespace win32
 
 		return true;
 	}
-};
+}

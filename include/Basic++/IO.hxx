@@ -87,11 +87,11 @@ namespace Basic::IO
         return true;
     }
 
-    static Expected<std::string> Read_File(
+    static Result<std::string> Read_File(
         const std::string_view& file_path,
         FileReadOptions options = FileReadOptions::ReadBinary)
     {
-        Expected<std::string> contents;
+        Result<std::string> contents;
 
         FILE* file;
 
