@@ -4,11 +4,13 @@
 using namespace Basic::Printing;
 using namespace Basic::Resulting;
 
-#include "Basic++/Expected.hxx"
+#include "Basic++/Result.hxx"
 
 #include "Basic++/Printing.hxx"
 
 #include "Basic++/defer.hxx"
+
+#include "Basic++/dbg.hxx"
 
 auto An_Result_Of_Int(int v) -> Result<int>
 {
@@ -129,8 +131,40 @@ auto append_69(const char* buffer, std::size_t buffer_size = (std::size_t)-1) ->
     return append_str;
 }
 
+/* a dummy class to test how an API would look with Result<T> at the forefront.*/
+class StringBuilder
+{
+    std::vector<const char*> strings_buffer;
+public:
+    auto append(const char* str) -> Err
+    {
+        strings_buffer.emplace_back(str);
+
+        return Basic::Success;
+    }
+
+    auto build() -> Err
+    {
+        // TODO:
+        return Basic::Success;
+    }
+};
+
+
 int main()
 {
+    bool condition = true;
+
+    // SUPER COOL! 
+    dbg if (condition)
+    {
+        // Basic::DbgPrintln("<this prints only in debug>");
+        Basic::Println("<this prints only in debug (with the DBG_NO_DBG)>");
+    }
+
+    // SUPER COOL!
+    dbg Basic::Println("<this also only prints in debug builds (with the DBG_NO_DBG)>");
+
     #if 0
     Println("{}", sizeof(Result<int>));
 
@@ -210,7 +244,7 @@ int main()
 
         auto a = result.expect();
 
-        EXPECT(a == 5 , "a should've equalved 5");
+        EXPECT(a == 5, "a should've equalved 5");
     }
 
     // reference type semantics

@@ -5,6 +5,8 @@
 
        #ifdef XXX_DEBUG
            // ... debug only code ...
+       #else
+           // ... release only code ...
        #endif
 
     But those two lines are quite code pollutive and add a lot of visual clutter.
@@ -51,6 +53,14 @@
     {
         printf("this will only be exeucted in "debug" builds!\n");
     }
+
+// or: 
+    dbg if (X == Y) 😀
+    {
+        printf("this will only be exeucted in "debug" builds!\n");
+    }
+            (be careful with this one, if you append an `else` 
+             branch it will also be ridded of in non debug builds.)
 */
 
 /* I also wouldn't mind

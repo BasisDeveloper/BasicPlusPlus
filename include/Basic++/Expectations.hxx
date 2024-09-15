@@ -71,7 +71,7 @@ namespace Basic
 #endif
 
 // this header relies on this file
-#include "Basic++/Expected.hxx"
+#include "Basic++/Result.hxx"
 
 namespace Basic
 {

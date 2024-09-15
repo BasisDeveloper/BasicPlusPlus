@@ -241,6 +241,8 @@ namespace Basic
 
       Result(bool&& _value) : _value(_value) {}
 
+      Result(const bool& _value) : _value(_value) {}
+
       Result(bool&& _value, ConstStringReference msg) : _value(_value), _status(msg) {}
 
       const bool& operator* () { return value(); }
@@ -281,5 +283,8 @@ namespace Basic
     };
 
     using Err = Result<bool>;
+
+    constexpr static bool Success = true;
+    constexpr static bool Failure = false;
   }
 }

@@ -5,7 +5,7 @@ if (TARGET Basic++)
 endif()
 
 project(Basic++
-    VERSION 2.1.2
+    VERSION 3.0.0
     LANGUAGES CXX
     HOMEPAGE_URL https://github.com/BasisDeveloper/BasicPlusPlus)
 
@@ -25,7 +25,7 @@ set(headers
     ${include_dir}/TypeName.hxx
     ${include_dir}/win32/Win32.hpp
     ${include_dir}/IO.hxx
-    ${include_dir}/Expected.hxx
+    ${include_dir}/Result.hxx
 )
 
 set(sources
