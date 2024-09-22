@@ -2,7 +2,7 @@
 
 #include "Basic++/Expectations.hxx"
 using namespace Basic::Printing;
-using namespace Basic::Resulting;
+using namespace Basic::ResultType;
 
 #include "Basic++/Result.hxx"
 
@@ -105,9 +105,9 @@ auto An_Result_Of_A_Non_Trival_Type_Ref(NTT& n) -> Result<NTT&>
     return n;
 }
 
-static_assert(sizeof(Result<int>) == 16);
-static_assert(sizeof(Result<int&>) == 16);
-static_assert(sizeof(Result<int*>) == 16);
+static_assert(sizeof(Result<int>) == 8);
+static_assert(sizeof(Result<int&>) == 8);
+static_assert(sizeof(Result<int*>) == 8);
 static_assert(sizeof(Result<bool>) == 16);
 
 auto some_bool_fn() -> Err
@@ -150,12 +150,11 @@ public:
     }
 };
 
-
 int main()
 {
     bool condition = true;
 
-    // SUPER COOL! 
+    // SUPER COOL!
     dbg if (condition)
     {
         // Basic::DbgPrintln("<this prints only in debug>");
@@ -279,5 +278,9 @@ int main()
         }
     }
 
+    //integer >> floating >> Basic::expect();
+
+    auto a = An_Result_Of_Int(6).expect("failure, y'all! An expected one!");
+    
     Println("Bye, bye, from Sandbox.exe!");
 }

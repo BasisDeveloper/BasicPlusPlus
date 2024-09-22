@@ -8,7 +8,7 @@
 
 namespace Basic
 {
-    inline namespace Resulting
+    inline namespace ResultType
     {
         template<typename T>
         struct Result;
