@@ -75,39 +75,36 @@ namespace Basic
 
 namespace Basic
 {
-    inline namespace Expectations
+    bool Expectations::Expect(
+        bool condition,
+        // FIXME: this is bad, every single time we call this function, even if it "succeeds"
+        //        the Message class performs format on the string given. We don't need it 
+        //        to do that if the function succeeds, right? Because the msg is only for failures.
+        //        well, most of the time.
+        const Message&& msg,
+        const std::source_location& source_location)
     {
-        bool Expect(
-            bool condition,
-            // FIXME: this is bad, every single time we call this function, even if it "succeeds"
-            //        the Message class performs format on the string given. We don't need it 
-            //        to do that if the function succeeds, right? Because the msg is only for failures.
-            //        well, most of the time.
-            const Message&& msg,
-            const std::source_location& source_location)
+        if (!condition) [[unlikely]]
         {
-            if (!condition) [[unlikely]]
-            {
-                Basic::Print("expectation not satisfied : '{}'", msg.string.data());
+            Basic::Print("expectation not satisfied : '{}'", msg.string.data());
 
-                const auto file_name =
-                    std::filesystem::path(source_location.file_name()).filename().string();
+            const auto file_name =
+                std::filesystem::path(source_location.file_name()).filename().string();
 
-                const char* function_name = source_location.function_name();
+            const char* function_name = source_location.function_name();
 
-                Basic::Printing::Println(" ~ file:'{}', function:'{}', line:'{}:{}'",
-                    file_name.data(), function_name, source_location.line(), source_location.column());
-            }
-
-            return condition;
+            Basic::Printing::Println(" ~ file:'{}', function:'{}', line:'{}:{}'",
+                file_name.data(), function_name, source_location.line(), source_location.column());
         }
 
-        template<typename T>
-        bool Expect(
-            Result<T> expected,
-            const std::source_location& source_location)
-        {
-            return Expect(expected == true, Message{ expected.status() }, source_location);
-        }
+        return condition;
+    }
+
+    template<typename T>
+    bool Expectations::Expect(
+        Result<T> expected,
+        const std::source_location& source_location)
+    {
+        return Expect(expected == true, Message{ expected.status() }, source_location);
     }
 }
