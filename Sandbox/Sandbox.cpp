@@ -1,5 +1,7 @@
 // #define NO_EXPECTATIONS
 
+#include <vector>
+
 #include "Basic++/Expectations.hxx"
 using namespace Basic::Printing;
 using namespace Basic::ResultType;
@@ -12,28 +14,28 @@ using namespace Basic::ResultType;
 
 #include "Basic++/dbg.hxx"
 
-auto An_Result_Of_Int(int v) -> Result<int>
+auto A_Result_Of_Int(int v) -> Result<int>
 {
     if (v > 5)
         return { __FUNCTION__ };
     return 5;
 }
 
-auto An_Result_Of_Const_Int_Reference(const int& v) -> Result<decltype(v)>
+auto A_Result_Of_Const_Int_Reference(const int& v) -> Result<decltype(v)>
 {
     if (v > 5)
         return { __FUNCTION__ };
     return v;
 }
 
-auto An_Result_Of_Int_Reference(int& v) -> Result<decltype(v)>
+auto A_Result_Of_Int_Reference(int& v) -> Result<decltype(v)>
 {
     if (v > 5)
         return { __FUNCTION__ };
     return v;
 }
 
-auto An_Result_Of_Newed_Int_Reference(int v) -> Result<int&>
+auto A_Result_Of_Newed_Int_Reference(int v) -> Result<int&>
 {
     if (v > 5)
         return { __FUNCTION__ };
@@ -43,7 +45,7 @@ auto An_Result_Of_Newed_Int_Reference(int v) -> Result<int&>
     return *new_int;
 }
 
-auto An_Result_Of_String(std::string v) -> Result<std::string>
+auto A_Result_Of_String(std::string v) -> Result<std::string>
 {
     if (v == "fail")
         return { __FUNCTION__ };
@@ -51,7 +53,7 @@ auto An_Result_Of_String(std::string v) -> Result<std::string>
     return v;
 }
 
-auto An_Result_Of_String_Reference(std::string& v) -> Result<std::string&>
+auto A_Result_Of_String_Reference(std::string& v) -> Result<std::string&>
 {
     if (v == "fail")
         return { __FUNCTION__ };
@@ -89,7 +91,7 @@ public:
     }
 }; static_assert(!std::is_trivial_v<NTT>);
 
-auto An_Result_Of_A_Non_Trival_Type(NTT n) -> Result<NTT>
+auto A_Result_Of_A_Non_Trival_Type(NTT n) -> Result<NTT>
 {
     if (n.fail)
         return "failure requested!";
@@ -97,7 +99,7 @@ auto An_Result_Of_A_Non_Trival_Type(NTT n) -> Result<NTT>
     return n;
 }
 
-auto An_Result_Of_A_Non_Trival_Type_Ref(NTT& n) -> Result<NTT&>
+auto A_Result_Of_A_Non_Trival_Type_Ref(NTT& n) -> Result<NTT&>
 {
     if (n.fail)
         return "failure requested!";
@@ -200,19 +202,19 @@ int main()
         // look at the logs, you can see why using Result<T&> is better
         NTT ntt;
         ntt.value = 69;
-        assert(An_Result_Of_A_Non_Trival_Type(ntt).expect().value == 69);
+        assert(A_Result_Of_A_Non_Trival_Type(ntt).expect().value == 69);
     }
     // ref:
     Println("ref:"); {
         NTT ntt;
         ntt.value = 69;
-        assert(An_Result_Of_A_Non_Trival_Type_Ref(ntt).expect().value == 69);
+        assert(A_Result_Of_A_Non_Trival_Type_Ref(ntt).expect().value == 69);
     }
     // fail on purpose:
     {
         NTT ntt;
         ntt.fail = true;
-        auto Result_ntt = An_Result_Of_A_Non_Trival_Type(ntt);
+        auto Result_ntt = A_Result_Of_A_Non_Trival_Type(ntt);
 
         if (!Result_ntt)
             Println(Result_ntt.status());
@@ -280,7 +282,7 @@ int main()
 
     //integer >> floating >> Basic::expect();
 
-    auto a = An_Result_Of_Int(6).expect("failure, y'all! An expected one!");
+    auto a = A_Result_Of_Int(6).expect("failure, y'all! An expected one!");
     
     Println("Bye, bye, from Sandbox.exe!");
 }

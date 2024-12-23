@@ -70,8 +70,6 @@ void win32::Error_Exit(LPCTSTR function_name, const std::source_location& locati
 	ExitProcess(EXIT_FAILURE);
 }
 
-
-
 std::string win32::ReadEntireFile(HANDLE handle_to_file)
 {
 	LARGE_INTEGER file_size{};
