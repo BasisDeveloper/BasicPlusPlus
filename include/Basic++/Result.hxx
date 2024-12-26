@@ -45,7 +45,8 @@ namespace Basic
 
     // this generates more optimal code
     inline Pointer48(const void* const src_ptr, std::uint64_t free_bits_value = 0)
-      : pointer_48(((std::uint64_t)src_ptr << 16) | free_bits_value) {}
+      : pointer_48(((std::uint64_t)src_ptr << 16) | free_bits_value) {
+    }
   };
 
   inline namespace ResultType
@@ -76,6 +77,8 @@ namespace Basic
       [[nodiscard]] inline const T& value() const { return value(); }
 
       Result() = default;
+
+      // Result() : _status(nullptr, Error_Status_Flags) {};
 
       Result(T&& _value) : _value(std::move(_value)) {}
 
@@ -108,8 +111,8 @@ namespace Basic
         return _value;
       }
 
-
-      [[nodiscard]] inline auto expect(
+      // [[nodiscard]] 
+      inline auto expect(
         const char* msg = nullptr,
         std::source_location sl = std::source_location::current()) -> T&
       {
@@ -125,7 +128,11 @@ namespace Basic
           {
             // TODO: this is dumb, we shouldn't have to construct a message like this.
             const char* status_ptr = (const char*)_status.as_ptr();
+
+            if (status_ptr == nullptr) status_ptr = "<(<undefined error message, this should be impossible>)>";
+
             Basic::Message message(status_ptr);
+
             Basic::Expectations::Expect(false, std::move(message), sl);
           }
 
@@ -144,7 +151,8 @@ namespace Basic
         #endif
       }
 
-      [[nodiscard]] inline auto expect(
+      //[[nodiscard]]
+      inline auto expect(
         const char* msg = nullptr,
         std::source_location sl = std::source_location::current()) const -> const T&
       {
@@ -208,7 +216,8 @@ namespace Basic
         return _value;
       }
 
-      [[nodiscard]] inline auto expect(
+      //[[nodiscard]] 
+      inline auto expect(
         const char* msg = nullptr,
         std::source_location sl = std::source_location::current()) -> T&
       {
@@ -245,7 +254,8 @@ namespace Basic
         #endif
       }
 
-      [[nodiscard]] inline auto expect(
+      //[[nodiscard]] 
+      inline auto expect(
         const char* msg = nullptr,
         std::source_location sl = std::source_location::current()) const -> const T&
       {
@@ -295,7 +305,8 @@ namespace Basic
 
       operator bool() const { return _status[0] == AOK[0]; }
 
-      [[nodiscard]] inline auto expect(
+      //[[nodiscard]] 
+      inline auto expect(
         const char* msg = nullptr,
         std::source_location sl = std::source_location::current()) -> const bool
       {
