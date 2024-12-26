@@ -10,7 +10,7 @@ using namespace Basic::ResultType;
 
 #include "Basic++/Printing.hxx"
 
-#include "Basic++/defer.hxx"
+#include "Basic++/Defer.hxx"
 
 #include "Basic++/dbg.hxx"
 
