@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdio>
 #include <cstddef>
-#include "Basic++/Expected.hxx"
+#include "Basic++/Result.hxx"
 
 /* Why would you use this header file instead of just writing traditional manual file I/O?
     - Well, I'm trying to simplify file reading and writing, turn them more into verbs instead

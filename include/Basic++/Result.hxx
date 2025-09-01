@@ -10,7 +10,7 @@
 
 namespace Basic {
   inline namespace ResultType {
-    template<typename T>
+    template<typename T, bool implicit_failure = false>
     struct Result;
   }
 }
@@ -26,8 +26,10 @@ namespace Basic
   // 0b1101110011001101 (0xDCCD) is also a good value.
   constexpr static std::uint64_t Error_Status_Flags = 0xDEAD;
 
-  // the virutal address space of a process by default in windows is 32 bits.
-  // and can only ever be 32 bits. And an operating system invariant, it is a core
+  thread_local static char* error_message_chain[std::numeric_limits<std::uint16_t>::max()] = {};
+
+  // the virutal address space of a process by default in windows is 32 bits
+  // and can only ever be 32 bits, it is an operating system invariant, it is a core
   // assumption of the Windows OS. Meaning that we only need a 48 bit pointer to 
   // store any refernces to readonly strings in the .rdata section.
   // https://stackoverflow.com/questions/16198700/%20using-the-extra-16-bits-in-64-bit-pointers
@@ -47,7 +49,7 @@ namespace Basic
     inline Pointer48(const void* const src_ptr, std::uint64_t free_bits_value = 0)
       : pointer_48(((std::uint64_t)src_ptr << 16) | free_bits_value) {
     }
-  };
+  }; static_assert(sizeof(Pointer48) == sizeof(std::uint64_t));
 
   inline namespace ResultType
   {
@@ -55,7 +57,7 @@ namespace Basic
 
     static string_type AOK = "^(AOK)";
 
-    template<typename T>
+    template<typename T, bool implicit_failure>
     struct Result
     {
     private:
@@ -67,6 +69,7 @@ namespace Basic
 
     public:
       using Type = T;
+      constexpr const static bool is_failure = implicit_failure;
 
       [[nodiscard]] inline string_type status() const
       {
@@ -74,15 +77,30 @@ namespace Basic
       }
 
       [[nodiscard]] inline T& value() { return _value; }
-      [[nodiscard]] inline const T& value() const { return value(); }
+      [[nodiscard]] inline const T& value() const { return _value; }
 
       Result() = default;
 
-      // Result() : _status(nullptr, Error_Status_Flags) {};
+      // a conversion constructor for Result classes 
+      // that may not be the same, but their T types are
+      // convertable to one another. 
+      //  i.e. `Result<float>` is convertable to `Result<int>`
+      //       so this makes that conversion possible.
+      template<typename U = T>
+      Result<T, false>(const Result<U, false>&& other) noexcept
+      {
+          // TODO:
+      };
 
-      Result(T&& _value) : _value(std::move(_value)) {}
+      template<typename U = T>
+      Result<T, false>(const Result<U, true>&& other) noexcept
+      {
 
-      Result(const T& _value) : _value(_value) {}
+      }
+
+      Result(T&& _value) requires(implicit_failure == false) : _value(std::move(_value)) {}
+
+      Result(const T& _value) requires(implicit_failure == false) : _value(_value) {}
 
       Result(string_type msg) : _status(msg, Error_Status_Flags) {}
 
@@ -168,7 +186,18 @@ namespace Basic
       constexpr inline operator bool() const { return ok(); }
 
       ~Result() {};
-    };
+
+      auto as_error() const -> Result<T, true>
+      {
+        return *this;
+      }
+
+      Result<T, true> operator~() const
+      {
+        Result<T, true> r = Result<T, true>(this->status());
+        return r;
+      }
+    }; static_assert(sizeof(Result<int>) == 8);
 
   // ========================           ========================
   // ======================== REFERENCE ========================
@@ -263,7 +292,7 @@ namespace Basic
       }
 
       constexpr operator bool() const { return _status.free_bits != Error_Status_Flags; }
-    };
+    }; static_assert(sizeof(Result<int&>) == 8);
 
     /* ========================      ======================== */
     /* ======================== BOOL ======================== */

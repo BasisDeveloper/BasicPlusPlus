@@ -152,9 +152,55 @@ public:
     }
 };
 
+#if 0
+struct File {};
+
+auto Open_File(const char* file_path) -> Result<File>
+{
+    return "failed to open file";
+}
+
+auto Dump_File(const char* file_path, char* buffer, std::size_t buffer_size) -> Result<bool>
+{
+    // Open_File may fail.
+    auto file = Open_File(file_path);
+
+    if (!file)
+        return ~file;
+
+    // ... you would read the file here ...
+
+    return true;
+}
+#endif
+
+
+struct alignas(std::uintptr_t) Pointer48
+{
+    std::uint64_t error_code : 16;
+    std::uint64_t addr : 48;
+
+    auto set_addr(auto* ptr)
+    {
+        addr = (std::uint64_t)ptr;
+    }
+
+    auto get() -> void*
+    {
+        return (void*)(*((std::uint64_t*)(this)) >> 16);
+    }
+};
+
 int main()
 {
     bool condition = true;
+
+    Pointer48 p48 = {};
+
+    const char* string = "Hello!";
+
+    p48.error_code = 69;
+    p48.set_addr(string);
 
     // SUPER COOL!
     dbg if (condition)
@@ -283,6 +329,6 @@ int main()
     //integer >> floating >> Basic::expect();
 
     auto a = A_Result_Of_Int(6).expect("failure, y'all! An expected one!");
-    
+
     Println("Bye, bye, from Sandbox.exe!");
 }

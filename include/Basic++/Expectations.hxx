@@ -10,7 +10,7 @@ namespace Basic
 {
     inline namespace ResultType
     {
-        template<typename T>
+        template<typename T, bool implicit_failure>
         struct Result;
     }
 }
@@ -26,7 +26,7 @@ namespace Basic
 
         template<typename T>
         bool Expect(
-            Result<T> expected,
+            Result<T, false> expected,
             const std::source_location& source_location = std::source_location::current());
 
     }
