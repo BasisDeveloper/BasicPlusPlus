@@ -212,8 +212,8 @@ namespace Basic::Formatting
 
                 if (type_informations[index].type_hash == typeid(std::string_view).hash_code())
                 {
-                    std::string_view* ptr_to_std_string = (std::string_view*)ptrs_to_args_data[index];
-                    return (ptr_to_std_string->data());
+                    std::string_view* ptr_to_std_string_view = (std::string_view*)ptrs_to_args_data[index];
+                    return std::string(*ptr_to_std_string_view);
                 }
 
                 return std::string(failure_string);
